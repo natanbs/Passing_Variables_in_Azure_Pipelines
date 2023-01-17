@@ -1,0 +1,25 @@
+trigger: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Stage1
+  displayName: Stage 1
+  jobs:
+  - job: Stage1_Job1
+    displayName: Stage 1 Job 1
+    steps:
+      - bash: |
+          echo SET FOO $FOO
+          export FOO="'FooValue'"
+          echo SET BAR with the value of FOO
+          echo "##vso[task.setvariable variable=BAR;isOutput=true]$FOO"
+        name: Stage1_Job1_Task1
+        displayName: Task1 - Set FOO into BAR
+      
+      - bash: |
+          BAZ_Task2=$(Stage1_Job1_Task1.BAR)
+          echo BAZ_Task2 $BAZ_Task2
+          echo "BAZ in Task2 equals BAR with the value of FOO: $(Stage1_Job1_Task1.BAR)"
+        displayName: "Task2, BAZ = BAR From FOO"
